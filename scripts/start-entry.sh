@@ -1,46 +1,27 @@
 #!/bin/bash -e
-#
-# start-entry.sh -- append a new timestamped log entry and open it for editing.
-#
-# Usage:  ./scripts/start-entry.sh
-#
-# Run this every time you sign on AND every time you sign off.
+# AP Cybersecurity — start a log entry for today.
+# Nine lines. Read them; you will be able to follow all of them by October.
 
-# Always run from the repository root, no matter where you invoke it from.
-cd "$(dirname "$0")/.."
+# Sync with GitHub. "|| true" means: if the network is down, keep going anyway
+# instead of stopping. A script that refuses to work on a train is a script you
+# stop using.
+git pull --quiet 2>/dev/null || true
 
-# Bring down anything that changed on GitHub before you start writing.
-# If this fails (no network, unmerged changes), keep going -- writing the
-# entry matters more than being in sync at this exact moment.
-git pull --quiet 2>/dev/null || echo "NOTE: git pull skipped (no upstream or no network)."
+FILENAME="logs/$(date +'%Y-%m-%d').log.md"        # one file per day, sortable
+touch "$FILENAME"                                 # create it if it isn't there
 
-FILENAME="logs/$(date +'%Y-%m-%d').log.md"
-mkdir -p logs
-touch "$FILENAME"
+echo ""                                    >> "$FILENAME"
+echo "# $(date +'%A, %B %e, %Y %I:%M %p')" >> "$FILENAME"   # timestamp header
+echo ""                                    >> "$FILENAME"
+echo "- [ ] "                              >> "$FILENAME"   # first task
 
-# Blank line first, but only if the file already has content -- keeps entries
-# separated without leaving a stray blank line at the top of a brand-new file.
-if [ -s "$FILENAME" ]; then
-  echo "" >> "$FILENAME"
-fi
-
-{
-  echo "# $(date +'%A, %B %e, %Y %I:%M %p')"
-  echo ""
-  echo "- [ ] "
-} >> "$FILENAME"
-
-echo "Started an entry in $FILENAME"
-
-# Open in VS Code if we can find it; otherwise say so rather than failing.
-if command -v code >/dev/null 2>&1; then
+# Open it in VS Code. The `nano` branch is a safety net for the one machine where
+# the `code` command did not get installed — you should not need it. No absolute
+# paths here on purpose: they break the moment an app moves.
+if command -v code > /dev/null; then
   code "$FILENAME"
-elif [ -x "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code" ]; then
-  "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code" "$FILENAME"
-elif [ -n "${EDITOR:-}" ]; then
-  "$EDITOR" "$FILENAME"
+elif command -v nano > /dev/null; then
+  nano "$FILENAME"
 else
-  echo "Could not find VS Code on your PATH."
-  echo "In VS Code: Cmd+Shift+P -> 'Shell Command: Install code command in PATH'"
-  echo "For now, open $FILENAME yourself."
+  echo "Wrote $FILENAME. Open it in your editor."
 fi
