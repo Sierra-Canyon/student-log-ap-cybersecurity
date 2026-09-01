@@ -28,10 +28,10 @@ class, handed to me at the door. Nothing about the end of the period changes.
 ## Setup
 
 You accepted this assignment through Classroom 50 and it made you a repository.
-Clone it somewhere sane:
+Clone it in our `version_control` directory:
 
 ```
-mkdir -p ~/version_control
+mkdir ~/version_control
 cd ~/version_control
 git clone <your-repo-url>
 cd ap-cybersecurity-fall-2026-student-log-<your-username>
