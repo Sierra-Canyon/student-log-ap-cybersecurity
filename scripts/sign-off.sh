@@ -9,6 +9,10 @@
 # Work from the top of the repository no matter where you ran this from.
 cd "$(dirname "$0")/.."
 
+# Turn on the commit helper in .githooks/. When you run `git commit` it asks
+# whether you are in class or out of class and writes the message for you.
+git config core.hooksPath .githooks
+
 FILENAME="logs/$(date +'%Y-%m-%d').log.md"
 
 if [ ! -f "$FILENAME" ]; then
@@ -66,3 +70,4 @@ fi
 echo "Check off what you finished, say in one honest word why anything is not"
 echo "finished, replace the AI line if you used it, then:"
 echo "    git add logs && git commit && git push"
+echo "git commit asks one question: type i if you are in class, o if you are not."
